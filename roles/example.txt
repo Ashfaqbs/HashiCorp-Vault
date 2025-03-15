@@ -1,0 +1,123 @@
+- start the container and have the cli 
+
+
+┌──(ashfaq㉿kali-vm)-[~/Desktop/software/Vault/roles]
+└─$ export VAULT_ADDR='http://127.0.0.1:8200'
+
+                                                                                                                                                                                                
+┌──(ashfaq㉿kali-vm)-[~/Desktop/software/Vault/roles]
+└─$ export VAULT_TOKEN='root'    
+
+- Testing
+                                                                                                                                                                                                
+┌──(ashfaq㉿kali-vm)-[~/Desktop/software/Vault/roles]
+└─$ vault secrets enable -path=secrets kv
+
+Success! Enabled the kv secrets engine at: secrets/
+
+
+- add the .hcl config                                                                                                                                                                                                 
+┌──(ashfaq㉿kali-vm)-[~/Desktop/software/Vault/roles]
+└─$ vault policy write sampleapp sampleapp-policy.hcl
+
+Success! Uploaded policy: sampleapp
+
+
+- get the token which has acess only on secrets/SampleApp/* and set token so we can do the actions defined in .hcl file on the secrets/SampleApp/* path
+                                                                                                                                                                                                
+┌──(ashfaq㉿kali-vm)-[~/Desktop/software/Vault/roles]
+└─$ vault token create -policy="sampleapp" -orphan
+
+Key                  Value
+---                  -----
+token                hvs.CAESIAiYitTc-6ZUynokr9OMTOynLcK-C3B07dd-7ZVkIJC2Gh4KHGh2cy50ajFueGx5UnVxbWVFWmVBVW15ZWNmdDE
+token_accessor       9eQ1iZtE0PyBnkEoBeflb9KR
+token_duration       768h
+token_renewable      true
+token_policies       ["default" "sampleapp"]
+identity_policies    []
+policies             ["default" "sampleapp"]
+                                                                                                                                                                                                
+┌──(ashfaq㉿kali-vm)-[~/Desktop/software/Vault/roles]
+└─$ export VAULT_TOKEN=hvs.CAESIAiYitTc-6ZUynokr9OMTOynLcK-C3B07dd-7ZVkIJC2Gh4KHGh2cy50ajFueGx5UnVxbWVFWmVBVW15ZWNmdDE
+
+- Testing                                                                                                                                                                                                
+┌──(ashfaq㉿kali-vm)-[~/Desktop/software/Vault/roles]
+└─$ vault kv put secrets/SampleApp/config username="sampleuser" password="samplepass" API="sampleAPI"
+
+Success! Data written to: secrets/SampleApp/config
+                                                                                                                                                                                                
+┌──(ashfaq㉿kali-vm)-[~/Desktop/software/Vault/roles]
+└─$ vault kv get secrets/SampleApp/config
+====== Data ======
+Key         Value
+---         -----
+API         sampleAPI
+password    samplepass
+username    sampleuser
+                                                                                                                                                                                                
+┌──(ashfaq㉿kali-vm)-[~/Desktop/software/Vault/roles]
+└─$ 
+
+
+
+
+
+ -- For V2, testing apis 
+
+┌──(ashfaq㉿kali-vm)-[~/Desktop/software/Vault/roles]
+└─$ vault policy write sampleapp sampleapp-policy-v2.hcl
+Success! Uploaded policy: sampleapp
+                                                                                                                                                                                                                    
+┌──(ashfaq㉿kali-vm)-[~/Desktop/software/Vault/roles]
+└─$ vault token create -policy="sampleapp" -orphan
+
+Key                  Value
+---                  -----
+token                hvs.CAESIDER77nE1mCBPEItTWJAa8BaADGxRHoqSwYdl2Npjec1Gh4KHGh2cy5qdXR4VFJmZkxacTFESHlnSDk3cTVGbzg
+token_accessor       5W3V0RIpL5T0Bw8s5awXvUsU
+token_duration       768h
+token_renewable      true
+token_policies       ["default" "sampleapp"]
+identity_policies    []
+policies             ["default" "sampleapp"]
+                                                                                                                                                                                                                    
+┌──(ashfaq㉿kali-vm)-[~/Desktop/software/Vault/roles]
+└─$ export VAULT_TOKEN=hvs.CAESIDER77nE1mCBPEItTWJAa8BaADGxRHoqSwYdl2Npjec1Gh4KHGh2cy5qdXR4VFJmZkxacTFESHlnSDk3cTVGbzg
+                                                                                                                                                                                                                    
+┌──(ashfaq㉿kali-vm)-[~/Desktop/software/Vault/roles]
+└─$ vault kv put secrets/data/SampleApp/config username="sampleuser" password="samplepass" API="sampleAPI"
+Success! Data written to: secrets/data/SampleApp/config
+                                                                                                                                                                                                                    
+┌──(ashfaq㉿kali-vm)-[~/Desktop/software/Vault/roles]
+└─$ vault kv get secrets/data/SampleApp/config                                                            
+====== Data ======
+Key         Value
+---         -----
+API         sampleAPI
+password    samplepass
+username    sampleuser
+                                                                                                                                                                                                                    
+                                                                                                                                                                                                              
+                                                                                                                                                                                                                    
+┌──(ashfaq㉿kali-vm)-[~/Desktop/software/Vault/roles]
+└─$ vault kv get secrets/data/SampleApp/config         
+====== Data ======
+Key         Value
+---         -----
+API         sampleAPI
+password    samplepass
+username    sampleuser
+                                                                                                                                                                                                                    
+┌──(ashfaq㉿kali-vm)-[~/Desktop/software/Vault/roles]
+└─$                        
+
+
+
+
+
+ token                hvs.CAESIDER77nE1mCBPEItTWJAa8BaADGxRHoqSwYdl2Npjec1Gh4KHGh2cy5qdXR4VFJmZkxacTFESHlnSDk3cTVGbzg
+export VAULT_TOKEN=hvs.CAESIDER77nE1mCBPEItTWJAa8BaADGxRHoqSwYdl2Npjec1Gh4KHGh2cy5qdXR4VFJmZkxacTFESHlnSDk3cTVGbzg
+
+vault kv put secrets/data/SampleApp/config username="sampleuser" password="samplepass" API="sampleAPI"
+
